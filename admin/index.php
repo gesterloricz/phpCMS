@@ -1,5 +1,10 @@
 <?php
 session_start();
+
+if ($_SESSION['userDetails']['username'] === "guest" || $_SESSION['userDetails']['username'] === null) {
+    header("Location: login.php");
+}
+
 include("templates/header.php");
 ?>
             <div class="posts-list p-5">
@@ -51,7 +56,7 @@ include("templates/header.php");
                     <tbody>
                         <?php
                         include('../connect.php');
-                        $selectPost = "SELECT * FROM posts";
+                        $selectPost = "SELECT * FROM posts WHERE userID = " . $_SESSION['userDetails']['user_id'] . " ORDER BY date DESC";
                         $result = mysqli_query($conn,$selectPost);
                         while($data = mysqli_fetch_array($result)){
                         ?>

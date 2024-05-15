@@ -19,10 +19,20 @@ body{
   justify-content: space-between;
 }
 
+ol,
+ul {
+  padding-left: 0rem;
+}
+
+.list-wrapper{
+  width: 100%;
+  border: solid 1px red;
+}
+
 .wrapper .sidebar{
-  width: 200px;
+  width: 210px;
   height: 100%;
-  background: #4b4276;
+  background: #1E2134;
   padding: 30px 0px;
   position: fixed;
 }
@@ -36,13 +46,13 @@ body{
 
 .wrapper .sidebar ul li{
   padding: 15px;
-  border-bottom: 1px solid #bdb8d7;
+  border-bottom: 1px solid #8c8da1;
   border-bottom: 1px solid rgba(0,0,0,0.05);
   border-top: 1px solid rgba(255,255,255,0.05);
 }    
 
 .wrapper .sidebar ul li a{
-  color: #bdb8d7;
+  color: #8c8da1;
   display: block;
 }
 
@@ -51,7 +61,7 @@ body{
 }
 
 .wrapper .sidebar ul li:hover{
-  background-color: #594f8d;
+  background-color: #1E2134;
 }
     
 .wrapper .sidebar ul li:hover a{

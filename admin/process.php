@@ -1,13 +1,18 @@
 <?php
+session_start();
+
 if (isset($_POST["create"])) {
     include("../connect.php");
     $title = $_POST["title"];
     $summary = $_POST["summary"];
     $content = $_POST["content"];
     $date = $_POST["date"];
-    $insertData = "INSERT INTO posts(date, title, summary, content) VALUES ('$date', '$title', '$summary', '$content')";
-    if (mysqli_query($conn, $insertData)) {
-        session_start();
+    $userID = $_SESSION['userDetails']['user_id']; 
+
+    $stmt = $conn->prepare("INSERT INTO posts(date, title, summary, content, userID) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssi", $date, $title, $summary, $content, $userID);
+
+    if ($stmt->execute()) {
         $_SESSION["create"] = "Post added successfully";
         header("Location:index.php");
     } else {

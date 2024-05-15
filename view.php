@@ -21,7 +21,7 @@
 <div class="admin-panel" onclick="goToAdminPanel()">
         Back
     </div>
-    <header class="p-4 bg-dark text-center">
+    <header class="p-4 text-center" style="background-color: #1E2134;">
         <h1><a href="index.php" class="text-light text-decoration-none">Blogs</a></h1>
     </header>
     <div class="post-list mt-5">

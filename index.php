@@ -1,3 +1,11 @@
+<?php 
+ $_SESSION['userDetails'] = array(
+    'user_id' => 0,
+    'username' => 'guest',
+    'name' => 'Guest User',
+);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,41 +23,52 @@
             cursor: pointer;
             font-weight: bold;
         }
+        .article-card {
+        border-radius: 10px; 
+        overflow: hidden;
+        min-height: 330px;
+    }
+         .article-content {
+             padding:15px;
+             display: flex;
+             flex-direction: column;
+             justify-content: space-between;
+             height: 100%;
+         }
+         .btn-primary {
+        align-self: flex-end;
+    }
     </style>
 </head>
 <body>
 <div class="admin-panel" onclick="goToAdminPanel()">
         Admin Panel
     </div>
-    <header class="p-4 bg-dark text-center">
+    <header class="p-4 text-center" style="background-color: #1E2134;">
         <h1><a href="index.php" class="text-light text-decoration-none">Blogs</a></h1>
     </header>
-    <div class="post-list mt-5">
-        <div class="container">
+    <div class="container mt-5">
+        <h3>Latest Articles</h3>
+        <div class="row">
             <?php
                 include("connect.php");
                 $sqlSelect = "SELECT * FROM posts";
                 $result = mysqli_query($conn,$sqlSelect);
                 while ($data = mysqli_fetch_array($result)) {
                 ?>
-                    <div class="row mb-4 p-5 bg-light">
-                        <div class="col-sm-2">
-                            <?php echo $data["date"]; ?>
-                        </div>
-                        <div class="col-sm-3">
-                           <h2> <?php echo $data["title"]; ?></h2>
-                        </div>
-                        <div class="col-sm-5">
-                            <?php echo $data["content"]; ?>
-                        </div>
-                        <div class="col-sm-2">
-                            <a href="view.php?id=<?php echo $data['postID']; ?>" class="btn btn-primary" style="background-color: rgb(0,112,66); border-color: rgb(0,112,66); color: white;">READ MORE</a>
+                    <div class="col-md-4 mb-4">
+                        <div class="card article-card">
+                            <div class="card-body article-content">
+                                <h5><?php echo $data["title"]; ?></h5>
+                                <p><?php echo $data["content"]; ?></p>
+                                <a href="view.php?id=<?php echo $data['postID']; ?>" class="btn btn-primary" style="background-color: rgb(0,112,66); border-color: rgb(0,112,66); color: white;">READ MORE</a>
+                            </div>
                         </div>
                     </div>
                 <?php
                 }
             ?>
-         </div>
+        </div>
     </div>
     <script>
         function goToAdminPanel() {

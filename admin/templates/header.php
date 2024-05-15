@@ -21,5 +21,5 @@
         </ul> 
     </div>
     <div class="main_content">
-        <div class="header">Welcome Back!</div>  
+        <div class="header">Welcome <?= $_SESSION['userDetails']['name'] ?>!</div>  
         <div class="info">

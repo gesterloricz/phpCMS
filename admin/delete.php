@@ -1,4 +1,5 @@
 <?php
+session_start();
 $id = $_GET["id"];
 if($id){
 include("../connect.php");
