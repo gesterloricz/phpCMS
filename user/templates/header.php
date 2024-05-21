@@ -1,3 +1,22 @@
+<?php
+
+
+if (!isset($_SESSION['userDetails'])) {
+    $_SESSION['userDetails'] = array(
+        'user_id' => 0,
+        'username' => 'guest',
+        'name' => 'Guest User',
+    );
+}
+
+if (isset($_POST['logout'])) {
+    session_destroy(); // Destroy the session
+    header("Location: index.php"); // Redirect to a page after logout
+    exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +36,7 @@
             <li><a href="./index.php"><i class="fas fa-home"></i>Dashboard</a></li>
             <li><a href="create.php"><i class="fas fa-pen-to-square"></i>Draft</a></li>
             <li><a href="../index.php"><i class="fas fa-blog"></i>Blogs</a></li>
-            <li><a href="#"><i class="fas fa-user"></i>Profile</a></li>
+            <li><a href="profile.php"><i class="fas fa-user"></i>Profile</a></li>
         </ul> 
     </div>
     <div class="main_content">

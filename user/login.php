@@ -2,31 +2,46 @@
 session_start();
 include_once '../connect.php';
 
-if (isset($_POST['login'])) {
-    $adminUser = $_POST['username'];
-    $adminPassword = $_POST['password'];
+$_SESSION['userDetails'] = array(
+    'user_id' => 0,
+    'username' => 'guest',
+    'name' => 'Guest User',
+);
 
-    if (empty($adminUser) || empty($adminPassword)) {
+if (isset($_POST['login'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    if (empty($username) || empty($password)) {
         $_SESSION['error'] = "Username or password cannot be blank.";
         header("Location: login.php");
         exit();
     }
 
-    $stmt = $conn->prepare("SELECT * FROM super_user WHERE adminUser = ?");
-    $stmt->bind_param("s", $adminUser);
+    $stmt = $conn->prepare("SELECT * FROM user WHERE username = ?");
+    $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
-        $psswrd = $user['adminPassword'];
 
-        if ($psswrd !== $adminPassword) {
-            $_SESSION['error'] = "Incorrect password.";
+        $psswrd =  $user['password'];
+
+        echo $psswrd;
+        if (!$psswrd === $password) {
+            echo $user;
+            $_SESSION['error'] = $psswrd;
             header("Location: login.php");
             exit();
         }
-
+        
+        $_SESSION['userDetails'] = array(
+            'user_id' => $user['userID'],
+            'username' => $user['username'],
+            'name' => $user['fullName'],
+        );        
+        
         header("Location: index.php");
         exit();
     } else {
@@ -37,6 +52,7 @@ if (isset($_POST['login'])) {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,7 +61,7 @@ if (isset($_POST['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <link rel="stylesheet" href="stylee.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -59,7 +75,7 @@ if (isset($_POST['login'])) {
                     <div class="container">
                         <form action="login.php" method="post">
                             <div class="text-center my-4">
-                                <h1 class="fw-bold mx-3 mb-0">Admin Login</h1>
+                                <h1 class="fw-bold mx-3 mb-0">Login</h1>
                             </div>
                             <?php
                             if (isset($_SESSION['error'])) { ?>
@@ -78,6 +94,9 @@ if (isset($_POST['login'])) {
                             </div>
                             <div class="form-group">
                                 <input type="submit" value="Login" name="login" class="btn btn-primary">
+                            </div>
+                            <div>
+                                <p>Not registered yet? <a href="register.php">Register Here.</a></p>
                             </div>
                         </form>
                     </div>
