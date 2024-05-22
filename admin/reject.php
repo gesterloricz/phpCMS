@@ -4,8 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject'])) {
     $postID = $_POST['postID'];
     $deletePost = "DELETE FROM posts WHERE postID = $postID";
     if (mysqli_query($conn, $deletePost)) {
-        echo "Post rejected and deleted successfully!";
-        // Redirect to a page or display a success message
+        header("Location: pendingBlogs.php");
     } else {
         echo "Error deleting post: " . mysqli_error($conn);
     }

@@ -22,12 +22,12 @@
                         <div class="mx-5">
                             <h4 class="text-2xl font-semibold text-gray-700">Users</h4>
                             <div class="font-bold text-gray-500"><?php
-                                                        include("../connect.php");
-                                                        $sqlSelect = "SELECT COUNT(*) as count FROM user";
-                                                        $result = mysqli_query($conn, $sqlSelect);
-                                                        $data = mysqli_fetch_assoc($result);
-                                                        echo $data['count'];
-                                                        ?></div>
+                                                                    include("../connect.php");
+                                                                    $sqlSelect = "SELECT COUNT(*) as count FROM user";
+                                                                    $result = mysqli_query($conn, $sqlSelect);
+                                                                    $data = mysqli_fetch_assoc($result);
+                                                                    echo $data['count'];
+                                                                    ?></div>
                         </div>
                     </div>
                 </div>
@@ -45,12 +45,12 @@
                         <div class="mx-5">
                             <h4 class="text-2xl font-semibold text-gray-700">Pending Blogs</h4>
                             <div class="font-bold text-gray-500"> <?php
-                                                        include("../connect.php");
-                                                        $sqlSelect = "SELECT COUNT(*) as count FROM posts WHERE status = 'Pending'";
-                                                        $result = mysqli_query($conn, $sqlSelect);
-                                                        $data = mysqli_fetch_assoc($result);
-                                                        echo $data['count'];
-                                                        ?></div>
+                                                                    include("../connect.php");
+                                                                    $sqlSelect = "SELECT COUNT(*) as count FROM posts WHERE status = 'Pending'";
+                                                                    $result = mysqli_query($conn, $sqlSelect);
+                                                                    $data = mysqli_fetch_assoc($result);
+                                                                    echo $data['count'];
+                                                                    ?></div>
                         </div>
                     </div>
                 </div>
@@ -66,12 +66,12 @@
                         <div class="mx-5">
                             <h4 class="text-2xl font-semibold text-gray-700">Blogs</h4>
                             <div class="font-bold text-gray-500"> <?php
-                                                        include("../connect.php");
-                                                        $sqlSelect = "SELECT COUNT(*) as count FROM posts WHERE status = 'Approved'";
-                                                        $result = mysqli_query($conn, $sqlSelect);
-                                                        $data = mysqli_fetch_assoc($result);
-                                                        echo $data['count'];
-                                                        ?></div>
+                                                                    include("../connect.php");
+                                                                    $sqlSelect = "SELECT COUNT(*) as count FROM posts WHERE status = 'Approved'";
+                                                                    $result = mysqli_query($conn, $sqlSelect);
+                                                                    $data = mysqli_fetch_assoc($result);
+                                                                    echo $data['count'];
+                                                                    ?></div>
                         </div>
                     </div>
                 </div>
@@ -99,19 +99,46 @@
                         </div>
 
                         <div class="relative">
-                            <select class="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
-                                <option>All</option>
-                                <option>Active</option>
-                                <option>Inactive</option>
+                            <select id="filterDropdown" class="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
+                                <option value="All">All</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="Suspended">Suspended</option>
                             </select>
-
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                                 </svg>
                             </div>
                         </div>
+
+                        <script>
+                            document.getElementById('filterDropdown').addEventListener('change', function() {
+                                var status = this.value;
+                                var rows = document.querySelectorAll('tbody tr');
+
+                                rows.forEach(function(row) {
+                                    var cell = row.cells[3];
+                                    var statusText = cell.textContent.trim();
+
+                                    if (status === 'All' || status === statusText) {
+                                        row.style.display = 'table-row';
+                                    } else {
+                                        row.style.display = 'none';
+                                    }
+                                });
+                            });
+                        </script>
+
                     </div>
+
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                    </div>
+
+
 
                     <div class="block relative mt-2 sm:mt-0">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-2">
@@ -161,14 +188,28 @@
                                             <p class="text-gray-900 whitespace-no-wrap"><?php echo date("F d, Y", strtotime($data["dateCreated"])) ?></p>
                                         </td>
                                         <td class="px-6 py-4 border-b border-gray-200 bg-white text-sm">
-                                            <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                                                <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
+                                            <span class="relative inline-block px-3 py-1 font-semibold <?php
+                                                                                                        if ($data['status'] == 'Active') {
+                                                                                                            echo 'text-green-900';
+                                                                                                        } elseif ($data['status'] == 'Inactive') {
+                                                                                                            echo 'text-red-900';
+                                                                                                        } elseif ($data['status'] == 'Suspended') {
+                                                                                                            echo 'text-yellow-900';
+                                                                                                        } ?> leading-tight">
+                                                <span aria-hidden class="absolute inset-0 <?php
+                                                                                            if ($data['status'] == 'Active') {
+                                                                                                echo 'bg-green-200';
+                                                                                            } elseif ($data['status'] == 'Inactive') {
+                                                                                                echo 'bg-red-200';
+                                                                                            } elseif ($data['status'] == 'Suspended') {
+                                                                                                echo 'bg-yellow-200';
+                                                                                            }  ?> opacity-50 rounded-full"></span>
                                                 <span class="relative"><?= $data['status']; ?></span>
                                             </span>
                                         </td>
 
                                         <td class="px-6 py-4 border-b border-gray-200 bg-white text-sm">
-                                            <a href="userInfo.php?id=<?=$data["userID"] ?>" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                            <a href="userInfo.php?id=<?= $data["userID"] ?>" class="text-indigo-600 hover:text-indigo-900">View</a>
                                         </td>
 
                                     </tr>

@@ -2,11 +2,13 @@
 session_start();
 include_once '../connect.php';
 
-$_SESSION['userDetails'] = array(
-    'user_id' => 0,
-    'username' => 'guest',
-    'name' => 'Guest User',
-);
+if (!isset($_SESSION['userDetails'])) {
+    $_SESSION['userDetails'] = array(
+        'user_id' => 0,
+        'username' => 'guest',
+        'name' => 'Guest User'
+    );
+}
 
 if (isset($_POST['login'])) {
     $username = $_POST['username'];

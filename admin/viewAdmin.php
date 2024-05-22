@@ -24,11 +24,24 @@
                             if (mysqli_num_rows($result) > 0) {
                                 $data = mysqli_fetch_array($result);
                         ?>
-                                <div class="post w-100 bg-light p-5">   
+                                <div class="post w-100 bg-light p-5">
                                     <p class="mt-2 text-gray-500"><?= date("F d, Y", strtotime($data["date"])) ?></p>
                                     <h1 class="text-3xl xl:text-5xl font-bold mt-4 mb-4 text-gray-800 capitalize"><?php echo  $data['title']; ?></h1>
-                                    <span class="bg-gray-200 mt-4 text-gray-600 px-2 py-1 rounded-lg text-md mr-2"><?=$data['tagName'] ?></span>
+                                    <span class="bg-gray-200 mt-4 text-gray-600 px-2 py-1 rounded-lg text-md mr-2"><?= $data['tagName'] ?></span>
                                     <p class="mt-10 leading-loose text-gray-600"><?php echo $data['content']; ?></p>
+                                    <p class="font-bold mt-24 text-gray-600">
+                                        Author, <br>
+                                        <?php
+                                        $sql = "SELECT `fullName` FROM `user` WHERE `userID` = ?";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->bind_param("i", $data["userID"]);
+                                        $stmt->execute();
+                                        $stmt->bind_result($fullName);
+                                        $stmt->fetch();
+                                        $stmt->close(); 
+                                        ?>
+                                        <?= $fullName; ?>
+                                    </p>
                                 </div>
                         <?php
                             } else {

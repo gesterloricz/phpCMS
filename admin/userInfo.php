@@ -1,9 +1,46 @@
 <?php
 require("partials/headerAdmin.php");
 
-// Assuming you have a valid session with user ID stored
-$userID = $_SESSION['userDetails']['user_id'];
+// Check if the user ID is provided in the URL
+if (isset($_GET['id'])) {
+    // Get the user ID from the URL
+    $userID = $_GET['id'];
 
+    // Fetch user data from the database
+    include("../connect.php");
+    $stmt = $conn->prepare("SELECT * FROM user WHERE userID = ?");
+    $stmt->bind_param("i", $userID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Retrieve and sanitize form inputs
+    $fullName = $_POST['fullName'];
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $status = $_POST['status'];
+    $passwordConfirmation = $_POST['passwordConfirmation'];
+
+    // Check if password and confirmation match
+    if ($password !== $passwordConfirmation) {
+        echo "Passwords do not match!";
+    } else {
+        // Update user data in the database
+        $stmt = $conn->prepare("UPDATE user SET fullName = ?, username = ?, email = ?, password = ?, status = ? WHERE userID = ?");
+        $stmt->bind_param("sssssi", $fullName, $username, $email, $password, $status, $userID);
+
+        if ($stmt->execute()) {
+            echo "User information updated successfully.";
+        } else {
+            echo "Error updating user information: " . $stmt->error;
+        }
+
+        $stmt->close();
+    }
+}
 ?>
 
 
@@ -15,45 +52,31 @@ $userID = $_SESSION['userDetails']['user_id'];
             <div class="mt-4">
                 <div class="p-6 bg-gray-100 rounded-md shadow-md">
                     <h2 class="text-lg text-gray-700 font-semibold capitalize">Account settings</h2>
-
-                    <?php
-                    // Assuming you have a valid session with user ID stored
-                    $userID = $_SESSION['userDetails']['user_id'];
-
-                    // Fetch user data from the database
-                    include("../connect.php");
-                    $stmt = $conn->prepare("SELECT * FROM user WHERE userID = ?");
-                    $stmt->bind_param("i", $userID);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $user = $result->fetch_assoc();
-                    ?>
-
-                    <form>
+                    <form action="userInfo.php?id=<?php echo $userID; ?>" method="post">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
                             <div>
-                                <label class="text-gray-700" for="username">Full Name</label>
-                                <input class="form-input w-full mt-2 p-2 rounded-md focus:border-indigo-600" type="text" value="<?php echo $user['fullName']; ?>">
+                                <label class="text-gray-700" for="fullName">Full Name</label>
+                                <input name="fullName" id="fullName" class="form-input w-full mt-2 p-2 rounded-md focus:border-indigo-600" type="text" value="<?php echo $user['fullName']; ?>">
                             </div>
 
                             <div>
                                 <label class="text-gray-700" for="username">Username</label>
-                                <input class="form-input w-full mt-2 p-2 rounded-md focus:border-indigo-600" type="text" value="<?php echo $user['username']; ?>">
+                                <input name="username" id="username" class="form-input w-full mt-2 p-2 rounded-md focus:border-indigo-600" type="text" value="<?php echo $user['username']; ?>">
                             </div>
 
                             <div>
                                 <label class="text-gray-700" for="emailAddress">Email Address</label>
-                                <input class="form-input w-full mt-2 p-2 rounded-md focus:border-indigo-600" type="email" value="<?php echo $user['email']; ?>">
+                                <input name="email" id="email" class="form-input w-full mt-2 p-2 rounded-md focus:border-indigo-600" type="email" value="<?php echo $user['email']; ?>">
                             </div>
 
                             <div>
                                 <label class="text-gray-700" for="password">Password</label>
-                                <input class="form-input w-full mt-2 p-2 rounded-md focus:border-indigo-600" type="password" value="<?php echo $user['password']; ?>">
+                                <input name="password" id="password" class="form-input w-full mt-2 p-2 rounded-md focus:border-indigo-600" type="password" value="<?php echo $user['password']; ?>">
                             </div>
 
                             <div>
                                 <label class="text-gray-700" for="status">Status</label>
-                                <select class="form-select w-full mt-2 p-2 rounded-md focus:border-indigo-600">
+                                <select name="status" id="status" class="form-select w-full mt-2 p-2 rounded-md focus:border-indigo-600">
                                     <option value="Active" <?php echo ($user['status'] == 'Active') ? 'selected' : ''; ?>>Active</option>
                                     <option value="Inactive" <?php echo ($user['status'] == 'Inactive') ? 'selected' : ''; ?>>Inactive</option>
                                     <option value="Suspended" <?php echo ($user['status'] == 'Suspended') ? 'selected' : ''; ?>>Suspended</option>
@@ -62,12 +85,12 @@ $userID = $_SESSION['userDetails']['user_id'];
 
                             <div>
                                 <label class="text-gray-700" for="passwordConfirmation">Password Confirmation</label>
-                                <input class="form-input w-full mt-2 p-2 rounded-md focus:border-indigo-600" type="password">
+                                <input name="passwordConfirmation" id="passwordConfirmation" class="form-input w-full mt-2 p-2 rounded-md focus:border-indigo-600" type="password">
                             </div>
                         </div>
 
                         <div class="flex justify-end mt-4">
-                            <button href="userInfo.php" class="px-4 py-2 bg-gray-800 text-gray-200 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700">Save</button>
+                            <button type="submit" class="px-4 py-2 bg-gray-800 text-gray-200 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700">Save</button>
                         </div>
                     </form>
                 </div>
